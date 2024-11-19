@@ -175,8 +175,6 @@ This SQL setup includes:
 5. Trigger for automatic user profile creation on signup
 6. Necessary permissions
 
-[Rest of README remains the same...]
-
 ## Environment Variables
 
 - `PORT`: Server port (default: 3000)
