@@ -1,36 +1,55 @@
 const supabase = require("../config/supabase");
 
 class UserController {
-  async getAllUsers(req, res, next) {
+  async getProfile(req, res) {
     try {
-      const { data, error } = await supabase.from("users").select("*");
+      const userId = req.user.id;
 
-      if (error) throw error;
-      res.json(data);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getUserById(req, res, next) {
-    try {
-      const { id } = req.params;
       const { data, error } = await supabase
         .from("users")
         .select("*")
-        .eq("id", id)
+        .eq("auth_id", userId)
         .single();
 
-      if (error) {
-        if (error.code === "PGRST116") {
-          return res.status(404).json({ message: "User not found" });
-        }
-        throw error;
-      }
+      if (error) throw error;
 
       res.json(data);
     } catch (error) {
-      next(error);
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async updateProfile(req, res) {
+    try {
+      const userId = req.user.id;
+      const {
+        firstName,
+        lastName,
+        bio,
+        major,
+        graduation_year,
+        profile_picture,
+      } = req.body;
+
+      const { data, error } = await supabase
+        .from("users")
+        .update({
+          firstName,
+          lastName,
+          bio,
+          major,
+          graduation_year,
+          profile_picture,
+        })
+        .eq("auth_id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      res.json(data);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
   }
 }
