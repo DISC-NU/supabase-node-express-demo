@@ -1,8 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/userController");
+const UserController = require("../controllers/UserController"); // Match exact filename
+const authMiddleware = require("../middleware/auth");
 
-router.get("/", userController.getAllUsers);
-router.get("/:id", userController.getUserById);
+router.use(authMiddleware);
+
+// Protected routes
+router.get("/profile", UserController.getProfile);
+router.put("/profile", UserController.updateProfile);
+router.get("/major/:major", UserController.getUsersByMajor);
+router.post("/courses/:courseId/enroll", UserController.enrollInCourse);
+router.post("/posts", UserController.createPost);
 
 module.exports = router;
